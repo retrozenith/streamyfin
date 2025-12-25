@@ -254,6 +254,7 @@ export function useAIChat(mediaContext?: MediaContext): UseAIChatReturn {
 
         setMessages((prev) => [...prev, assistantMessage]);
       } catch (err) {
+        console.error("[AIChat] Error:", err);
         const errorMessage =
           err instanceof Error ? err.message : "Failed to get response";
         setError(errorMessage);
@@ -261,7 +262,7 @@ export function useAIChat(mediaContext?: MediaContext): UseAIChatReturn {
         const errorChatMessage: ChatMessage = {
           id: generateId(),
           role: "assistant",
-          content: "Sorry, I encountered an error. Please try again.",
+          content: `Sorry, I encountered an error: ${errorMessage}`,
           timestamp: new Date(),
           isError: true,
         };

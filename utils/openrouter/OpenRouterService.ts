@@ -30,6 +30,8 @@ interface OpenRouterResponse {
       role: string;
       content: string | null;
       tool_calls?: ToolCall[];
+      // Reasoning models may put content in 'reasoning' field
+      reasoning?: string;
     };
     finish_reason: string;
   }>;
@@ -252,10 +254,23 @@ export class OpenRouterService {
           continue;
         }
 
-        // No tool calls, return the content
-        const content = assistantMessage?.content;
+        // No tool calls, extract the content
+        // Some reasoning models put their response in 'reasoning' instead of 'content'
+        const content =
+          assistantMessage?.content || assistantMessage?.reasoning;
+
+        // Log for debugging if we had to use reasoning fallback
+        if (!assistantMessage?.content && assistantMessage?.reasoning) {
+          console.log(
+            "[OpenRouter] Using 'reasoning' field as content (reasoning model)",
+          );
+        }
 
         if (!content) {
+          console.log(
+            "[OpenRouter] Empty content, full message:",
+            JSON.stringify(assistantMessage, null, 2),
+          );
           throw new OpenRouterError(
             "No response content received",
             "EMPTY_RESPONSE",
