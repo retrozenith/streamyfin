@@ -1,14 +1,15 @@
 /**
  * @file ChatMessage.tsx
- * @description Individual message bubble component for AI chat
+ * @description Individual message bubble component for AI chat with markdown support
  * @author retrozenith <80767544+retrozenith@users.noreply.github.com>
- * @version 1.0.0
+ * @version 1.1.0
  * @since 2025-12-25
  */
 
 import { Ionicons } from "@expo/vector-icons";
-import React, { useCallback } from "react";
-import { Clipboard, Pressable, View } from "react-native";
+import React, { useCallback, useMemo } from "react";
+import { Clipboard, Pressable, StyleSheet, View } from "react-native";
+import Markdown from "react-native-markdown-display";
 import { toast } from "sonner-native";
 import { Text } from "@/components/common/Text";
 import type { ChatMessage as ChatMessageType } from "@/hooks/useAIChat";
@@ -18,9 +19,103 @@ interface ChatMessageProps {
 }
 
 /**
+ * Markdown styles for assistant messages.
+ */
+const markdownStyles = StyleSheet.create({
+  body: {
+    color: "#f5f5f5",
+    fontSize: 15,
+    lineHeight: 22,
+  },
+  heading1: {
+    color: "#ffffff",
+    fontSize: 20,
+    fontWeight: "700",
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  heading2: {
+    color: "#ffffff",
+    fontSize: 18,
+    fontWeight: "600",
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  heading3: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "600",
+    marginTop: 6,
+    marginBottom: 2,
+  },
+  strong: {
+    color: "#ffffff",
+    fontWeight: "600",
+  },
+  em: {
+    color: "#e5e5e5",
+    fontStyle: "italic",
+  },
+  bullet_list: {
+    marginVertical: 4,
+  },
+  ordered_list: {
+    marginVertical: 4,
+  },
+  list_item: {
+    marginVertical: 2,
+  },
+  bullet_list_icon: {
+    color: "#a855f7",
+    marginRight: 8,
+  },
+  code_inline: {
+    backgroundColor: "#374151",
+    color: "#e879f9",
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    fontFamily: "monospace",
+    fontSize: 13,
+  },
+  code_block: {
+    backgroundColor: "#1f2937",
+    padding: 12,
+    borderRadius: 8,
+    marginVertical: 8,
+  },
+  fence: {
+    backgroundColor: "#1f2937",
+    padding: 12,
+    borderRadius: 8,
+    marginVertical: 8,
+  },
+  blockquote: {
+    backgroundColor: "#1f2937",
+    borderLeftColor: "#a855f7",
+    borderLeftWidth: 3,
+    paddingLeft: 12,
+    paddingVertical: 4,
+    marginVertical: 8,
+  },
+  link: {
+    color: "#a855f7",
+    textDecorationLine: "underline",
+  },
+  paragraph: {
+    marginVertical: 4,
+  },
+  hr: {
+    backgroundColor: "#374151",
+    height: 1,
+    marginVertical: 12,
+  },
+});
+
+/**
  * Renders a single chat message bubble.
- * User messages are aligned right with purple background.
- * Assistant messages are aligned left with neutral background.
+ * User messages are aligned right with purple background (plain text).
+ * Assistant messages are aligned left with neutral background (markdown rendered).
  */
 export const ChatMessage: React.FC<ChatMessageProps> = React.memo(
   ({ message }) => {
@@ -31,6 +126,22 @@ export const ChatMessage: React.FC<ChatMessageProps> = React.memo(
       Clipboard.setString(message.content);
       toast.success("Copied to clipboard");
     }, [message.content]);
+
+    const renderContent = useMemo(() => {
+      if (isUser || isError) {
+        // User messages and errors: plain text
+        return (
+          <Text
+            className={`text-base ${isUser ? "text-white" : "text-red-200"}`}
+          >
+            {message.content}
+          </Text>
+        );
+      }
+
+      // Assistant messages: render markdown
+      return <Markdown style={markdownStyles}>{message.content}</Markdown>;
+    }, [isUser, isError, message.content]);
 
     return (
       <View
@@ -45,11 +156,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = React.memo(
                 : "bg-neutral-800 rounded-bl-sm"
           }`}
         >
-          <Text
-            className={`text-base ${isUser ? "text-white" : isError ? "text-red-200" : "text-neutral-100"}`}
-          >
-            {message.content}
-          </Text>
+          {renderContent}
 
           {!isUser && !isError && (
             <Pressable
