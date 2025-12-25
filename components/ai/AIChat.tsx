@@ -85,9 +85,9 @@ export const AIChat: React.FC<AIChatProps> = ({ item, onClose }) => {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior='padding'
       className='flex-1 bg-black'
-      keyboardVerticalOffset={Platform.OS === "ios" ? 50 : 0}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
     >
       {/* Header */}
       <View
@@ -188,8 +188,11 @@ export const AIChat: React.FC<AIChatProps> = ({ item, onClose }) => {
 
       {/* Input */}
       <View
-        className='flex flex-row items-end px-4 py-3 border-t border-neutral-800'
-        style={{ paddingBottom: Math.max(insets.bottom + 60, 72) }}
+        className='flex flex-row items-end px-4 py-3 border-t border-neutral-800 bg-black'
+        style={{
+          paddingBottom:
+            Platform.OS === "ios" ? Math.max(insets.bottom + 60, 72) : 16,
+        }}
       >
         <TextInput
           className='flex-1 bg-neutral-800 rounded-2xl px-4 py-3 text-white text-base mr-3'
