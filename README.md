@@ -231,6 +231,7 @@ A special mention to the following people and projects for their contributions:
 - [Reiverr](https://github.com/aleksilassila/reiverr) for invaluable help with understanding the Jellyfin API
 - [Jellyfin TS SDK](https://github.com/jellyfin/jellyfin-sdk-typescript) for providing the TypeScript SDK
 - [Seerr](https://github.com/seerr-team/seerr) for enabling API integration with their project
+- [Icons8](https://icons8.com) for providing the AI chat bubble icon
 
 
 ## ⭐ Star History

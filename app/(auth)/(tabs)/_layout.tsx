@@ -129,7 +129,7 @@ export default function TabLayout() {
               !settings?.enableAIChat || !settings?.openRouterApiKey,
             tabBarIcon:
               Platform.OS === "android"
-                ? (_e) => require("@/assets/icons/chat.bubbles.png")
+                ? (_e) => require("@/assets/icons/chat.bubble.fill.png")
                 : (_e) => ({ sfSymbol: "message.fill" }),
           }}
         />
