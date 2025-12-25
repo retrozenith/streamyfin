@@ -270,6 +270,15 @@
             "seven_days": "7 days",
             "fifteen_days": "15 days",
             "thirty_days": "30 days"
+          },
+          "tools": {
+            "title": "AI Tools (MCP)",
+            "enable_tools": "Enable AI Tools",
+            "info": "AI Tools let the assistant search TMDB and TVDB for real-time data. Requires a model that supports function calling (Claude, GPT-4).",
+            "tmdb_key": "TMDB API Key",
+            "tmdb_hint": "Get your key from themoviedb.org/settings/api",
+            "tvdb_key": "TVDB API Key",
+            "tvdb_hint": "Get your key from thetvdb.com/dashboard/account/apikey"
           }
         }
       },

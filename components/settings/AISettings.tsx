@@ -150,6 +150,68 @@ export const AISettings = () => {
               {t("home.settings.plugins.ai.reset_config_button")}
             </Button>
           </View>
+
+          {/* AI Tools (MCP) Section */}
+          <ListGroup
+            title={t("home.settings.plugins.ai.tools.title")}
+            className='mt-4'
+          >
+            <ListItem
+              title={t("home.settings.plugins.ai.tools.enable_tools")}
+              onPress={() =>
+                updateSettings({ enableAITools: !settings?.enableAITools })
+              }
+              value={settings?.enableAITools ? "✓" : undefined}
+            />
+          </ListGroup>
+
+          {settings?.enableAITools && (
+            <View className='flex flex-col rounded-xl overflow-hidden p-4 bg-neutral-900 mt-2'>
+              <Text className='text-xs text-purple-400 mb-3'>
+                {t("home.settings.plugins.ai.tools.info")}
+              </Text>
+
+              <Text className='font-bold mb-1'>
+                {t("home.settings.plugins.ai.tools.tmdb_key")}
+              </Text>
+              <Text className='text-xs text-gray-600 mb-2'>
+                {t("home.settings.plugins.ai.tools.tmdb_hint")}
+              </Text>
+              <Input
+                className='border border-neutral-800 mb-4'
+                placeholder='TMDB API Key'
+                value={settings?.tmdbApiKey ?? ""}
+                keyboardType='default'
+                secureTextEntry={true}
+                returnKeyType='done'
+                autoCapitalize='none'
+                textContentType='password'
+                onChangeText={(value) =>
+                  updateSettings({ tmdbApiKey: value || undefined })
+                }
+              />
+
+              <Text className='font-bold mb-1'>
+                {t("home.settings.plugins.ai.tools.tvdb_key")}
+              </Text>
+              <Text className='text-xs text-gray-600 mb-2'>
+                {t("home.settings.plugins.ai.tools.tvdb_hint")}
+              </Text>
+              <Input
+                className='border border-neutral-800'
+                placeholder='TVDB API Key'
+                value={settings?.tvdbApiKey ?? ""}
+                keyboardType='default'
+                secureTextEntry={true}
+                returnKeyType='done'
+                autoCapitalize='none'
+                textContentType='password'
+                onChangeText={(value) =>
+                  updateSettings({ tvdbApiKey: value || undefined })
+                }
+              />
+            </View>
+          )}
         </>
       ) : (
         <View className='flex flex-col rounded-xl overflow-hidden p-4 bg-neutral-900'>

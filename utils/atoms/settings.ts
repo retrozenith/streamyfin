@@ -186,6 +186,10 @@ export type Settings = {
   enableAIChat?: boolean;
   aiSystemPrompt?: string;
   chatRetentionDays?: 0 | 7 | 15 | 30; // 0 = no retention
+  // AI Tools (MCP)
+  enableAITools?: boolean; // Toggle for models that don't support tools
+  tmdbApiKey?: string;
+  tvdbApiKey?: string;
 };
 
 export interface Lockable<T> {
@@ -299,6 +303,10 @@ export const defaultValues: Settings = {
 
 Your goal is to enhance every user's entertainment experience by being knowledgeable, helpful, and genuinely passionate about helping them find content they'll love.`,
   chatRetentionDays: 0,
+  // AI Tools (MCP)
+  enableAITools: false,
+  tmdbApiKey: undefined,
+  tvdbApiKey: undefined,
 };
 
 const loadSettings = (): Partial<Settings> => {
