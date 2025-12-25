@@ -7,7 +7,12 @@
  */
 
 import type { BaseItemDto } from "@jellyfin/sdk/lib/generated-client/models";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  clearChatMessages,
+  loadChatMessages,
+  saveChatMessages,
+} from "@/utils/ai-tools/chatStorage";
 import { useSettings } from "@/utils/atoms/settings";
 import {
   OpenRouterService,
@@ -173,9 +178,29 @@ export function useAIChat(mediaContext?: MediaContext): UseAIChatReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastUserMessage, setLastUserMessage] = useState<string | null>(null);
+  const isInitialized = useRef(false);
 
   const isEnabled = settings.enableAIChat ?? false;
   const isConfigured = Boolean(settings.openRouterApiKey);
+  const retentionDays = settings.chatRetentionDays ?? 0;
+
+  // Load saved messages on mount
+  useEffect(() => {
+    if (!isInitialized.current && retentionDays > 0) {
+      const savedMessages = loadChatMessages(retentionDays);
+      if (savedMessages.length > 0) {
+        setMessages(savedMessages);
+      }
+      isInitialized.current = true;
+    }
+  }, [retentionDays]);
+
+  // Save messages when they change (only if retention is enabled)
+  useEffect(() => {
+    if (isInitialized.current && messages.length > 0) {
+      saveChatMessages(messages, retentionDays);
+    }
+  }, [messages, retentionDays]);
 
   const service = useMemo(() => {
     if (!settings.openRouterApiKey) {
@@ -279,6 +304,7 @@ export function useAIChat(mediaContext?: MediaContext): UseAIChatReturn {
     setMessages([]);
     setError(null);
     setLastUserMessage(null);
+    clearChatMessages();
   }, []);
 
   const retryLastMessage = useCallback(async () => {
