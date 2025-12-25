@@ -28,6 +28,11 @@ export const PluginSettings = () => {
         title='Marlin Search'
         showArrow
       />
+      <ListItem
+        onPress={() => router.push("/settings/plugins/ai/page")}
+        title={t("home.settings.plugins.ai.title")}
+        showArrow
+      />
     </ListGroup>
   );
 };

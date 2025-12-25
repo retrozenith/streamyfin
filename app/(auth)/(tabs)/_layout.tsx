@@ -121,6 +121,18 @@ export default function TabLayout() {
                 : (_e) => ({ sfSymbol: "list.dash.fill" }),
           }}
         />
+        <NativeTabs.Screen
+          name='(ai-chat)'
+          options={{
+            title: t("tabs.ai_chat"),
+            tabBarItemHidden:
+              !settings?.enableAIChat || !settings?.openRouterApiKey,
+            tabBarIcon:
+              Platform.OS === "android"
+                ? (_e) => require("@/assets/icons/chat.bubbles.png")
+                : (_e) => ({ sfSymbol: "message.fill" }),
+          }}
+        />
       </NativeTabs>
     </>
   );

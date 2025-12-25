@@ -238,6 +238,39 @@
           "toasts": {
             "saved": "Saved"
           }
+        },
+        "ai": {
+          "title": "Artificial Intelligence",
+          "ai_info": "Chat with AI about movies and shows. Get recommendations, trivia, and insights about your content.",
+          "api_key": "OpenRouter API Key",
+          "api_key_hint": "Get your API key from openrouter.ai",
+          "api_key_placeholder": "sk-or-...",
+          "model": "AI Model",
+          "model_hint": "Enter the model ID (e.g., google/gemini-2.0-flash-001, openai/gpt-4o-mini)",
+          "test_and_save_button": "Test & Save",
+          "save_button": "Save",
+          "reset_config_button": "Reset AI Configuration",
+          "connection_success": "Connection successful!",
+          "connection_failed": "Connection failed. Check your API key.",
+          "config_cleared": "AI configuration cleared",
+          "settings_saved": "Settings saved",
+          "status": "Status",
+          "enabled": "Enabled",
+          "disabled": "Disabled",
+          "not_configured": "AI is not configured. Go to Settings → Plugins → Artificial Intelligence to set up.",
+          "chat": {
+            "placeholder": "Ask about this content...",
+            "loading": "Thinking...",
+            "welcome": "Hi! Ask me anything about {{title}} - summaries, recommendations, trivia, and more!",
+            "welcome_generic": "Hi! Ask me anything about movies and TV shows."
+          },
+          "retention": {
+            "title": "Chat Retention",
+            "no_retention": "No retention",
+            "seven_days": "7 days",
+            "fifteen_days": "15 days",
+            "thirty_days": "30 days"
+          }
         }
       },
       "storage": {
@@ -542,6 +575,7 @@
     "search": "Search",
     "library": "Library",
     "custom_links": "Custom Links",
-    "favorites": "Favorites"
+    "favorites": "Favorites",
+    "ai_chat": "AI Chat"
   }
 }

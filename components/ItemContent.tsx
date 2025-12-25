@@ -29,6 +29,7 @@ import { apiAtom, userAtom } from "@/providers/JellyfinProvider";
 import { useSettings } from "@/utils/atoms/settings";
 import { getLogoImageUrlById } from "@/utils/jellyfin/image/getLogoImageUrlById";
 import { AddToFavorites } from "./AddToFavorites";
+import { AIChatButton } from "./ai/AIChatButton";
 import { ItemHeader } from "./ItemHeader";
 import { ItemTechnicalDetails } from "./ItemTechnicalDetails";
 import { MoreMoviesWithActor } from "./MoreMoviesWithActor";
@@ -117,6 +118,7 @@ export const ItemContent: React.FC<ItemContentProps> = React.memo(
 
                     <PlayedStatus items={[item]} size='large' />
                     <AddToFavorites item={item} />
+                    <AIChatButton item={item} size='large' />
                   </View>
                 )}
               </View>
@@ -134,6 +136,7 @@ export const ItemContent: React.FC<ItemContentProps> = React.memo(
 
                     <PlayedStatus items={[item]} size='large' />
                     <AddToFavorites item={item} />
+                    <AIChatButton item={item} size='large' />
                   </View>
                 )}
               </View>
