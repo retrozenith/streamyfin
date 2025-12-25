@@ -30,34 +30,7 @@ export interface ToolResult {
   content: string;
 }
 
-// TVDB token cache
-let tvdbToken: string | null = null;
-let tvdbTokenExpiry: number = 0;
-
-/**
- * Get TVDB authentication token.
- */
-async function getTvdbToken(apiKey: string): Promise<string> {
-  if (tvdbToken && Date.now() < tvdbTokenExpiry) {
-    return tvdbToken;
-  }
-
-  const response = await fetch(`${TVDB_BASE_URL}/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ apikey: apiKey }),
-  });
-
-  if (!response.ok) {
-    throw new Error("TVDB authentication failed");
-  }
-
-  const data = await response.json();
-  tvdbToken = data.data.token;
-  tvdbTokenExpiry = Date.now() + 23 * 60 * 60 * 1000; // 23 hours
-
-  return tvdbToken!;
-}
+// TVDB doesn't require API key for basic access
 
 /**
  * Execute a TMDB API call.
@@ -216,15 +189,13 @@ async function executeTmdbTool(
 }
 
 /**
- * Execute a TVDB API call.
+ * Execute a TVDB API call (no auth required).
  */
 async function executeTvdbTool(
   name: string,
   args: Record<string, unknown>,
-  apiKey: string,
 ): Promise<unknown> {
-  const token = await getTvdbToken(apiKey);
-  const headers = { Authorization: `Bearer ${token}` };
+  const headers = { "Content-Type": "application/json" };
 
   switch (name) {
     case "tvdb_search_series": {
@@ -295,7 +266,6 @@ async function executeTvdbTool(
 export async function executeTool(
   toolCall: ToolCall,
   tmdbApiKey?: string,
-  tvdbApiKey?: string,
 ): Promise<ToolResult> {
   const { name, arguments: argsString } = toolCall.function;
 
@@ -309,10 +279,8 @@ export async function executeTool(
       }
       result = await executeTmdbTool(name, args, tmdbApiKey);
     } else if (name.startsWith("tvdb_")) {
-      if (!tvdbApiKey) {
-        throw new Error("TVDB API key not configured");
-      }
-      result = await executeTvdbTool(name, args, tvdbApiKey);
+      // TVDB doesn't require API key
+      result = await executeTvdbTool(name, args);
     } else {
       throw new Error(`Unknown tool: ${name}`);
     }
@@ -339,9 +307,6 @@ export async function executeTool(
 export async function executeTools(
   toolCalls: ToolCall[],
   tmdbApiKey?: string,
-  tvdbApiKey?: string,
 ): Promise<ToolResult[]> {
-  return Promise.all(
-    toolCalls.map((tc) => executeTool(tc, tmdbApiKey, tvdbApiKey)),
-  );
+  return Promise.all(toolCalls.map((tc) => executeTool(tc, tmdbApiKey)));
 }

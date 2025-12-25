@@ -189,7 +189,6 @@ export type Settings = {
   // AI Tools (MCP)
   enableAITools?: boolean; // Toggle for models that don't support tools
   tmdbApiKey?: string;
-  tvdbApiKey?: string;
 };
 
 export interface Lockable<T> {
@@ -306,7 +305,6 @@ Your goal is to enhance every user's entertainment experience by being knowledge
   // AI Tools (MCP)
   enableAITools: false,
   tmdbApiKey: undefined,
-  tvdbApiKey: undefined,
 };
 
 const loadSettings = (): Partial<Settings> => {

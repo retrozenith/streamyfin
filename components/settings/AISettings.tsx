@@ -178,7 +178,7 @@ export const AISettings = () => {
                 {t("home.settings.plugins.ai.tools.tmdb_hint")}
               </Text>
               <Input
-                className='border border-neutral-800 mb-4'
+                className='border border-neutral-800 mb-3'
                 placeholder='TMDB API Key'
                 value={settings?.tmdbApiKey ?? ""}
                 keyboardType='default'
@@ -191,25 +191,9 @@ export const AISettings = () => {
                 }
               />
 
-              <Text className='font-bold mb-1'>
-                {t("home.settings.plugins.ai.tools.tvdb_key")}
+              <Text className='text-xs text-neutral-500'>
+                {t("home.settings.plugins.ai.tools.tvdb_note")}
               </Text>
-              <Text className='text-xs text-gray-600 mb-2'>
-                {t("home.settings.plugins.ai.tools.tvdb_hint")}
-              </Text>
-              <Input
-                className='border border-neutral-800'
-                placeholder='TVDB API Key'
-                value={settings?.tvdbApiKey ?? ""}
-                keyboardType='default'
-                secureTextEntry={true}
-                returnKeyType='done'
-                autoCapitalize='none'
-                textContentType='password'
-                onChangeText={(value) =>
-                  updateSettings({ tvdbApiKey: value || undefined })
-                }
-              />
             </View>
           )}
         </>

@@ -185,7 +185,7 @@ export function useAIChat(mediaContext?: MediaContext): UseAIChatReturn {
     // Import tools dynamically to avoid circular deps
     const { getAvailableTools } = require("@/utils/ai-tools/toolDefinitions");
     const tools = settings.enableAITools
-      ? getAvailableTools(settings.tmdbApiKey, settings.tvdbApiKey)
+      ? getAvailableTools(settings.tmdbApiKey)
       : [];
 
     return new OpenRouterService({
@@ -194,14 +194,12 @@ export function useAIChat(mediaContext?: MediaContext): UseAIChatReturn {
       enableTools: settings.enableAITools ?? false,
       tools,
       tmdbApiKey: settings.tmdbApiKey,
-      tvdbApiKey: settings.tvdbApiKey,
     });
   }, [
     settings.openRouterApiKey,
     settings.openRouterModel,
     settings.enableAITools,
     settings.tmdbApiKey,
-    settings.tvdbApiKey,
   ]);
 
   const sendMessage = useCallback(

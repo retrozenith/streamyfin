@@ -63,7 +63,6 @@ export interface OpenRouterConfig {
   enableTools?: boolean;
   tools?: ToolDefinition[];
   tmdbApiKey?: string;
-  tvdbApiKey?: string;
 }
 
 /**
@@ -102,7 +101,6 @@ export class OpenRouterService {
   private readonly enableTools: boolean;
   private readonly tools: ToolDefinition[];
   private readonly tmdbApiKey?: string;
-  private readonly tvdbApiKey?: string;
   private readonly baseUrl = "https://openrouter.ai/api/v1/chat/completions";
   private readonly maxToolIterations = 5;
 
@@ -128,7 +126,6 @@ export class OpenRouterService {
     this.enableTools = config.enableTools ?? false;
     this.tools = config.tools ?? [];
     this.tmdbApiKey = config.tmdbApiKey;
-    this.tvdbApiKey = config.tvdbApiKey;
   }
 
   /**
@@ -150,6 +147,10 @@ export class OpenRouterService {
       body.tools = this.tools;
       body.tool_choice = "auto";
     }
+
+    console.log(
+      `[OpenRouter] Request: model=${this.model}, messages=${messages.length}, tools=${includeTools ? this.tools.length : 0}`,
+    );
 
     const response = await fetch(this.baseUrl, {
       method: "POST",
@@ -174,7 +175,11 @@ export class OpenRouterService {
       );
     }
 
-    return response.json();
+    const data = await response.json();
+    console.log(
+      `[OpenRouter] Response: finish_reason=${data.choices?.[0]?.finish_reason}, tool_calls=${data.choices?.[0]?.message?.tool_calls?.length ?? 0}`,
+    );
+    return data;
   }
 
   /**
@@ -222,10 +227,16 @@ export class OpenRouterService {
           });
 
           // Execute all tool calls
+          console.log(
+            `[OpenRouter] Executing ${assistantMessage.tool_calls.length} tool call(s):`,
+            assistantMessage.tool_calls
+              .map((tc) => tc.function.name)
+              .join(", "),
+          );
+
           const toolResults = await executeTools(
             assistantMessage.tool_calls,
             this.tmdbApiKey,
-            this.tvdbApiKey,
           );
 
           // Add tool results to conversation

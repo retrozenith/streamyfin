@@ -274,20 +274,18 @@ export const tvdbTools: ToolDefinition[] = [
 
 /**
  * Get all available tools based on which API keys are configured.
+ * TVDB tools are always available (no API key required).
+ * TMDB tools require an API key.
  */
-export function getAvailableTools(
-  tmdbApiKey?: string,
-  tvdbApiKey?: string,
-): ToolDefinition[] {
+export function getAvailableTools(tmdbApiKey?: string): ToolDefinition[] {
   const tools: ToolDefinition[] = [];
 
   if (tmdbApiKey) {
     tools.push(...tmdbTools);
   }
 
-  if (tvdbApiKey) {
-    tools.push(...tvdbTools);
-  }
+  // TVDB tools are always available (no API key required)
+  tools.push(...tvdbTools);
 
   return tools;
 }
