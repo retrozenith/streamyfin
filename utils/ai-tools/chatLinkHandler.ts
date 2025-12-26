@@ -37,10 +37,11 @@ export function handleChatLink(url: string): boolean {
         });
 
         // Navigate to Jellyseerr page
+        // The page expects params matching MovieResult/TvResult structure
         router.push({
-          pathname: "/(auth)/(tabs)/(home)/jellyseerr/page",
+          pathname: "/(auth)/(tabs)/(search)/jellyseerr/page",
           params: {
-            tmdbId,
+            id: tmdbId, // Jellyseerr page expects 'id' not 'tmdbId'
             mediaType,
           },
         } as any);

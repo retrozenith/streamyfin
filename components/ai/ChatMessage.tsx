@@ -140,12 +140,27 @@ export const ChatMessage: React.FC<ChatMessageProps> = React.memo(
       }
 
       // Clean up any leaked tool call JSON from the content
+      // This is a safety net - the AI should never return raw tool output
       let cleanContent = message.content;
-      if (cleanContent.includes("tool_call_id")) {
+
+      // Remove any JSON objects that look like tool results
+      if (
+        cleanContent.includes("tool_call_id") ||
+        cleanContent.includes('"content":{')
+      ) {
         console.warn("[ChatMessage] Cleaning leaked tool output from message");
+
+        // Remove complete tool result JSON objects
         cleanContent = cleanContent
-          .replace(/\{[^}]*"tool_call_id"[^}]*\}/g, "")
+          .replace(/\{[^{}]*"tool_call_id"[^{}]*\}/g, "")
+          .replace(/\{[^{}]*"content":\{[^{}]*\}[^{}]*\}/g, "")
           .trim();
+
+        // If the entire message was just tool output, show an error
+        if (!cleanContent) {
+          cleanContent =
+            "⚠️ Error: The AI returned raw data instead of a response. Please try your query again.";
+        }
       }
 
       // Assistant messages: render markdown with link handler
