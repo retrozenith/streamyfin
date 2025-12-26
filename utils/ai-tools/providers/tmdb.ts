@@ -222,6 +222,7 @@ export async function executeTmdbTool(
         year: m.release_date?.toString().slice(0, 4),
         overview: m.overview?.toString().slice(0, 200),
         vote_average: m.vote_average,
+        jellyseerr_link: `jellyseerr://movie/${m.id}`,
       }));
     }
 
@@ -237,6 +238,7 @@ export async function executeTmdbTool(
         first_air_date: s.first_air_date,
         overview: s.overview?.toString().slice(0, 200),
         vote_average: s.vote_average,
+        jellyseerr_link: `jellyseerr://tv/${s.id}`,
       }));
     }
 

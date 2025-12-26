@@ -139,8 +139,25 @@ export const ChatMessage: React.FC<ChatMessageProps> = React.memo(
         );
       }
 
-      // Assistant messages: render markdown
-      return <Markdown style={markdownStyles}>{message.content}</Markdown>;
+      // Assistant messages: render markdown with link handler
+      return (
+        <Markdown
+          style={markdownStyles}
+          onLinkPress={(url) => {
+            const {
+              handleChatLink,
+              isChatLink,
+            } = require("@/utils/ai-tools/chatLinkHandler");
+            if (isChatLink(url)) {
+              handleChatLink(url);
+              return false; // Prevent default
+            }
+            return true; // Allow default for external links
+          }}
+        >
+          {message.content}
+        </Markdown>
+      );
     }, [isUser, isError, message.content]);
 
     return (

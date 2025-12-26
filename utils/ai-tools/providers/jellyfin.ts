@@ -151,14 +151,22 @@ export async function executeJellyfinTool(
         ],
       });
 
-      return response.data.Items?.map((item: BaseItemDto) => ({
-        id: item.Id,
-        name: item.Name,
-        type: item.Type,
-        year: item.ProductionYear,
-        rating: item.OfficialRating,
-        overview: item.Overview?.substring(0, 100),
-      }));
+      return response.data.Items?.map((item: BaseItemDto) => {
+        const result = {
+          id: item.Id,
+          name: item.Name,
+          type: item.Type,
+          year: item.ProductionYear,
+          rating: item.OfficialRating,
+          overview: item.Overview?.substring(0, 100),
+        };
+
+        // Add navigation link for each item
+        return {
+          ...result,
+          link: `jellyfin://item/${item.Id}`,
+        };
+      });
     }
 
     case "jellyfin_recent": {
@@ -180,6 +188,7 @@ export async function executeJellyfinTool(
         type: item.Type,
         year: item.ProductionYear,
         overview: item.Overview?.substring(0, 100),
+        link: `jellyfin://item/${item.Id}`,
       }));
     }
 

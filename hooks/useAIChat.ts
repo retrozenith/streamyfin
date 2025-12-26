@@ -164,6 +164,13 @@ function buildSystemPrompt(basePrompt: string, context?: MediaContext): string {
     `\nUse this context to provide relevant information, recommendations, and insights about this content.`,
   );
 
+  contextParts.push(
+    `\nWhen referencing media items from tool results:`,
+    `- If the result includes a 'link' field (jellyfin://), use it to create clickable links: [Title](link)`,
+    `- If the result includes a 'jellyseerr_link' field, mention it as a request option: "Not in your library? [Request it](jellyseerr_link)"`,
+    `- Format examples: [The Matrix](jellyfin://item/12345) or [Request The Matrix](jellyseerr://movie/603)`,
+  );
+
   return basePrompt + contextParts.join("\n");
 }
 
