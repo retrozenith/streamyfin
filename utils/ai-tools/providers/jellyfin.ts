@@ -119,7 +119,20 @@ export async function executeJellyfinTool(
 ): Promise<unknown> {
   const { api, userId } = context;
 
+  console.log("[Jellyfin Tool] Executing:", name);
+  console.log("[Jellyfin Tool] Context:", {
+    hasApi: !!api,
+    userId,
+    contextKeys: Object.keys(context),
+  });
+
   if (!api || !userId) {
+    console.error(
+      "[Jellyfin Tool] Missing context - api:",
+      !!api,
+      "userId:",
+      userId,
+    );
     throw new Error("Jellyfin API or User ID not available in context");
   }
 
