@@ -1,13 +1,9 @@
-/**
- * @file OpenRouterService.ts
- * @description Service for interacting with OpenRouter AI API for chat completions with tool support
- * @author retrozenith <80767544+retrozenith@users.noreply.github.com>
- * @version 2.0.0
- * @since 2025-12-25
- */
-
 import type { ToolDefinition } from "@/utils/ai-tools/toolDefinitions";
-import { executeTools, type ToolCall } from "@/utils/ai-tools/toolExecutor";
+import {
+  executeTools,
+  type ToolCall,
+  type ToolExecutionContext,
+} from "@/utils/ai-tools/toolExecutor";
 
 /**
  * Represents a single message in a chat conversation.
@@ -64,7 +60,7 @@ export interface OpenRouterConfig {
   // Tool calling options
   enableTools?: boolean;
   tools?: ToolDefinition[];
-  tmdbApiKey?: string;
+  toolContext?: ToolExecutionContext;
 }
 
 /**
@@ -102,7 +98,7 @@ export class OpenRouterService {
   private readonly temperature: number;
   private readonly enableTools: boolean;
   private readonly tools: ToolDefinition[];
-  private readonly tmdbApiKey?: string;
+  private readonly toolContext?: ToolExecutionContext;
   private readonly baseUrl = "https://openrouter.ai/api/v1/chat/completions";
   private readonly maxToolIterations = 5;
 
@@ -127,7 +123,7 @@ export class OpenRouterService {
     this.temperature = config.temperature ?? 0.7;
     this.enableTools = config.enableTools ?? false;
     this.tools = config.tools ?? [];
-    this.tmdbApiKey = config.tmdbApiKey;
+    this.toolContext = config.toolContext;
   }
 
   /**
@@ -238,7 +234,7 @@ export class OpenRouterService {
 
           const toolResults = await executeTools(
             assistantMessage.tool_calls,
-            this.tmdbApiKey,
+            this.toolContext || {},
           );
 
           // Add tool results to conversation

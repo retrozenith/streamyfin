@@ -188,12 +188,19 @@ export const tmdbTools: ToolDefinition[] = [
 ];
 
 /**
+ * Context for TMDB tools.
+ */
+export interface TmdbToolContext {
+  tmdbApiKey?: string;
+}
+
+/**
  * Execute a TMDB API call.
  */
 export async function executeTmdbTool(
   name: string,
   args: Record<string, unknown>,
-  context: { tmdbApiKey?: string },
+  context: TmdbToolContext,
 ): Promise<unknown> {
   const { tmdbApiKey } = context;
   if (!tmdbApiKey) {

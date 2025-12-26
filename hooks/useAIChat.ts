@@ -8,6 +8,7 @@
 
 import type { BaseItemDto } from "@jellyfin/sdk/lib/generated-client/models";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useJellyfin } from "@/providers/JellyfinProvider";
 import {
   clearChatMessages,
   loadChatMessages,
@@ -174,6 +175,7 @@ function buildSystemPrompt(basePrompt: string, context?: MediaContext): string {
  */
 export function useAIChat(mediaContext?: MediaContext): UseAIChatReturn {
   const { settings } = useSettings();
+  const { api, user, deviceId } = useJellyfin();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -218,13 +220,21 @@ export function useAIChat(mediaContext?: MediaContext): UseAIChatReturn {
       model: settings.openRouterModel,
       enableTools: settings.enableAITools ?? false,
       tools,
-      tmdbApiKey: settings.tmdbApiKey,
+      toolContext: {
+        tmdbApiKey: settings.tmdbApiKey,
+        api: api || undefined,
+        userId: user?.Id,
+        deviceId: deviceId,
+      },
     });
   }, [
     settings.openRouterApiKey,
     settings.openRouterModel,
     settings.enableAITools,
     settings.tmdbApiKey,
+    api,
+    user?.Id,
+    deviceId,
   ]);
 
   const sendMessage = useCallback(

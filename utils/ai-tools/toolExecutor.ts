@@ -6,7 +6,8 @@
  * @since 2025-12-25
  */
 
-import { executeTmdbTool } from "./providers/tmdb";
+import { executeJellyfinTool, JellyfinToolContext } from "./providers/jellyfin";
+import { executeTmdbTool, TmdbToolContext } from "./providers/tmdb";
 import { executeTvdbTool } from "./providers/tvdb";
 import { ToolCall, ToolResult } from "./types";
 
@@ -15,10 +16,9 @@ export type { ToolCall, ToolResult };
 /**
  * Execution context for tools.
  */
-export interface ToolExecutionContext {
-  tmdbApiKey?: string;
-  // Add other context properties here as needed (e.g., jellyfin)
-}
+export interface ToolExecutionContext
+  extends TmdbToolContext,
+    JellyfinToolContext {}
 
 /**
  * Execute a tool call and return the result.
@@ -41,6 +41,8 @@ export async function executeTool(
       result = await executeTmdbTool(name, args, toolContext);
     } else if (name.startsWith("tvdb_")) {
       result = await executeTvdbTool(name, args, toolContext);
+    } else if (name.startsWith("jellyfin_")) {
+      result = await executeJellyfinTool(name, args, toolContext);
     } else {
       throw new Error(`Unknown tool: ${name}`);
     }
@@ -48,14 +50,17 @@ export async function executeTool(
     return {
       tool_call_id: toolCall.id,
       role: "tool",
-      content: JSON.stringify(result, null, 2),
+      name: name,
+      content: JSON.stringify(result),
     };
   } catch (error) {
+    console.error(`Error executing tool ${name}:`, error);
     return {
       tool_call_id: toolCall.id,
       role: "tool",
+      name: name,
       content: JSON.stringify({
-        error: error instanceof Error ? error.message : "Tool execution failed",
+        error: error instanceof Error ? error.message : "Unknown error",
       }),
     };
   }
