@@ -257,14 +257,23 @@ export class OpenRouterService {
 
         // No tool calls, extract the content
         // Some reasoning models put their response in 'reasoning' instead of 'content'
-        const content =
-          assistantMessage?.content || assistantMessage?.reasoning;
+        let content = assistantMessage?.content || assistantMessage?.reasoning;
 
         // Log for debugging if we had to use reasoning fallback
         if (!assistantMessage?.content && assistantMessage?.reasoning) {
           console.log(
             "[OpenRouter] Using 'reasoning' field as content (reasoning model)",
           );
+        }
+
+        // Clean up tool call XML tags that some models include in their output
+        if (content && typeof content === "string") {
+          content = content
+            .replace(/<tool_call>[\s\S]*?<\/tool_call>/g, "")
+            .trim();
+          content = content
+            .replace(/<thinking>[\s\S]*?<\/thinking>/g, "")
+            .trim();
         }
 
         if (!content) {
