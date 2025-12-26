@@ -12,17 +12,21 @@ import React, { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
-  KeyboardAvoidingView,
   Platform,
   Pressable,
   ScrollView,
   TextInput,
   View,
 } from "react-native";
+import Animated, {
+  useAnimatedKeyboard,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "@/components/common/Text";
 import { extractMediaContext, useAIChat } from "@/hooks/useAIChat";
 import { ChatMessage } from "./ChatMessage";
+import { KeyboardFriendlyScrollView } from "./KeyboardFriendlyScrollView";
 
 interface AIChatProps {
   item?: BaseItemDto;
@@ -38,6 +42,25 @@ export const AIChat: React.FC<AIChatProps> = ({ item, onClose }) => {
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef<ScrollView>(null);
   const [inputText, setInputText] = useState("");
+  const keyboard = useAnimatedKeyboard();
+
+  const animatedInputStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: -keyboard.height.value }],
+    };
+  });
+
+  const animatedPaddingStyle = useAnimatedStyle(() => {
+    // When keyboard is open (height > 60), reduce padding to 12
+    // When closed, use safe area + tab bar consideration
+    const closedPadding =
+      Platform.OS === "ios" ? Math.max(insets.bottom + 60, 72) : 16;
+    const openPadding = 12;
+
+    return {
+      paddingBottom: keyboard.height.value > 60 ? openPadding : closedPadding,
+    };
+  });
 
   const mediaContext = item ? extractMediaContext(item) : undefined;
   const {
@@ -84,14 +107,10 @@ export const AIChat: React.FC<AIChatProps> = ({ item, onClose }) => {
   }
 
   return (
-    <KeyboardAvoidingView
-      behavior='padding'
-      className='flex-1 bg-black'
-      keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
-    >
+    <View className='flex-1 bg-black' style={{ flex: 1 }}>
       {/* Header */}
       <View
-        className='flex flex-row items-center justify-between px-4 py-3 border-b border-neutral-800'
+        className='flex flex-row items-center justify-between px-4 py-3 border-b border-neutral-800 bg-black'
         style={{ paddingTop: insets.top + 12 }}
       >
         <View className='flex flex-row items-center'>
@@ -122,7 +141,7 @@ export const AIChat: React.FC<AIChatProps> = ({ item, onClose }) => {
       </View>
 
       {/* Messages */}
-      <ScrollView
+      <KeyboardFriendlyScrollView
         ref={scrollViewRef}
         className='flex-1 px-4'
         contentContainerStyle={{
@@ -184,15 +203,12 @@ export const AIChat: React.FC<AIChatProps> = ({ item, onClose }) => {
             </Text>
           </View>
         )}
-      </ScrollView>
+      </KeyboardFriendlyScrollView>
 
       {/* Input */}
-      <View
+      <Animated.View
         className='flex flex-row items-end px-4 py-3 border-t border-neutral-800 bg-black'
-        style={{
-          paddingBottom:
-            Platform.OS === "ios" ? Math.max(insets.bottom + 60, 72) : 16,
-        }}
+        style={[animatedInputStyle, animatedPaddingStyle]}
       >
         <TextInput
           className='flex-1 bg-neutral-800 rounded-2xl px-4 py-3 text-white text-base mr-3'
@@ -220,7 +236,7 @@ export const AIChat: React.FC<AIChatProps> = ({ item, onClose }) => {
             color={inputText.trim() && !isLoading ? "#ffffff" : "#6b7280"}
           />
         </Pressable>
-      </View>
-    </KeyboardAvoidingView>
+      </Animated.View>
+    </View>
   );
 };
