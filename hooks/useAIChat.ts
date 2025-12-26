@@ -165,11 +165,27 @@ function buildSystemPrompt(basePrompt: string, context?: MediaContext): string {
   );
 
   contextParts.push(
-    `\n\nIMPORTANT - Tool results formatting:`,
-    `- When tools return a "summary" field, USE IT DIRECTLY in your response - it already contains properly formatted markdown links`,
-    `- The summary has the format: [Item Name](link) - just copy it into your response`,
-    `- For individual items with a "link" field, format as: [Name](link)`,
-    `- For TMDB results with "jellyseerr_link", offer requests: [Request Title](jellyseerr_link)`,
+    `\n\n=== AVAILABLE TOOLS - USE PROACTIVELY ===`,
+    `\nYou have access to powerful tools. Use them automatically when relevant:`,
+    `\n**Jellyfin Tools** (User's Personal Library):`,
+    `- jellyfin_search: Search the user's Jellyfin library for movies, shows, episodes`,
+    `- jellyfin_recent: Get recently added content from their library`,
+    `- jellyfin_get_counts: Get library statistics (movie count, series count, etc.)`,
+    `- jellyfin_play: Prepare an item for playback`,
+    `\n**TMDB Tools** (Global Movie Database):`,
+    `- tmdb_search_movies/tmdb_search_tv: Search for any movie or show globally`,
+    `- tmdb_discover: Discover content by genre, rating, year, etc.`,
+    `- tmdb_trending: Find what's popular right now`,
+    `\n**When to use which:**`,
+    `- User asks "Do I have X?" → Use jellyfin_search`,
+    `- User asks "Find me action movies" → Use tmdb_discover (global) OR jellyfin_search (their library)`,
+    `- User asks "What did I add recently?" → Use jellyfin_recent`,
+    `- User asks "How many movies do I have?" → Use jellyfin_get_counts`,
+    `- User asks about a specific movie/show → Search their library first (jellyfin_search), then TMDB if not found`,
+    `\n**IMPORTANT - Tool results formatting:**`,
+    `- When tools return a "summary" field, USE IT DIRECTLY - it has pre-formatted markdown links`,
+    `- Just copy the summary into your response, don't recreate it`,
+    `- For TMDB results with "jellyseerr_link", suggest: "Not in your library? [Request it](jellyseerr_link)"`,
   );
 
   return basePrompt + contextParts.join("\n");
