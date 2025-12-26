@@ -1,4 +1,11 @@
 /**
+ * @file chatLinkHandler.ts
+ * @description Utility for handling custom navigation links in AI chat
+ */
+
+import { router } from "expo-router";
+
+/**
  * Handles navigation for custom URL schemes in chat
  * Supports: jellyfin://item/{id} and jellyseerr://movie/{tmdbId} or jellyseerr://tv/{tmdbId}
  */
