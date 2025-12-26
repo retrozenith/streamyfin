@@ -237,6 +237,11 @@ export class OpenRouterService {
             this.toolContext || {},
           );
 
+          console.log(
+            "[OpenRouter] Tool results:",
+            JSON.stringify(toolResults, null, 2),
+          );
+
           // Add tool results to conversation
           for (const result of toolResults) {
             currentMessages.push({

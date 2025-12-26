@@ -164,7 +164,26 @@ export async function executeJellyfinTool(
           }),
         ) || [];
 
-      return items;
+      console.log(
+        "[Jellyfin Search] Found items:",
+        items.length,
+        "first item:",
+        items[0],
+      );
+
+      // Also return a formatted summary for the AI
+      const summary = items
+        .map(
+          (item) =>
+            `[${item.name}](${item.link})${item.year ? ` (${item.year})` : ""}`,
+        )
+        .join("\n");
+
+      return {
+        items,
+        summary: `Found ${items.length} items:\n${summary}`,
+        count: items.length,
+      };
     }
 
     case "jellyfin_recent": {
@@ -180,7 +199,7 @@ export async function executeJellyfinTool(
         fields: [ItemFields.Overview, "ProductionYear" as ItemFields],
       });
 
-      return response.data.map((item: BaseItemDto) => ({
+      const items = response.data.map((item: BaseItemDto) => ({
         id: item.Id,
         name: item.Name,
         type: item.Type,
@@ -188,6 +207,19 @@ export async function executeJellyfinTool(
         overview: item.Overview?.substring(0, 100),
         link: `jellyfin://item/${item.Id}`,
       }));
+
+      const summary = items
+        .map(
+          (item) =>
+            `[${item.name}](${item.link})${item.year ? ` (${item.year})` : ""} - ${item.type}`,
+        )
+        .join("\n");
+
+      return {
+        items,
+        summary: `Recently added:\n${summary}`,
+        count: items.length,
+      };
     }
 
     case "jellyfin_play": {

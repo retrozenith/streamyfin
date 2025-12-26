@@ -165,12 +165,11 @@ function buildSystemPrompt(basePrompt: string, context?: MediaContext): string {
   );
 
   contextParts.push(
-    `\n\nIMPORTANT - When tool results include links, you MUST format them properly:`,
-    `1. For Jellyfin items: Each result has a "link" field. Use it like this: [Movie Name](link_value)`,
-    `2. For TMDB results: Use the "jellyseerr_link" field if user wants to request content`,
-    `3. ALWAYS include the link when mentioning an item found by tools`,
-    `\nExample: If tool returns {"name": "The Matrix", "link": "jellyfin://item/abc123"}`,
-    `You should write: "I found [The Matrix](jellyfin://item/abc123) in your library."`,
+    `\n\nIMPORTANT - Tool results formatting:`,
+    `- When tools return a "summary" field, USE IT DIRECTLY in your response - it already contains properly formatted markdown links`,
+    `- The summary has the format: [Item Name](link) - just copy it into your response`,
+    `- For individual items with a "link" field, format as: [Name](link)`,
+    `- For TMDB results with "jellyseerr_link", offer requests: [Request Title](jellyseerr_link)`,
   );
 
   return basePrompt + contextParts.join("\n");
