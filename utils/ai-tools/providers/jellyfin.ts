@@ -88,6 +88,25 @@ export const jellyfinTools: ToolDefinition[] = [
       },
     },
   },
+  {
+    type: "function",
+    function: {
+      name: "jellyfin_get_counts",
+      description:
+        "Get the total count of media items in your Jellyfin library (movies, series, episodes, etc.).",
+      parameters: {
+        type: "object",
+        properties: {
+          item_types: {
+            type: "string",
+            description:
+              "Optional comma-separated list of types to count (Movie,Series,Episode). If not specified, returns counts for all major types.",
+          },
+        },
+        required: [],
+      },
+    },
+  },
 ];
 
 /**
@@ -183,6 +202,36 @@ export async function executeJellyfinTool(
           type: item.Type,
         },
         message: `Ready to play ${item.Name}. (Client-side implementation required to start actual playback)`,
+      };
+    }
+
+    case "jellyfin_get_counts": {
+      const itemTypes = ((args.item_types as string)?.split(
+        ",",
+      ) as BaseItemKind[]) || [
+        BaseItemKind.Movie,
+        BaseItemKind.Series,
+        BaseItemKind.Episode,
+        BaseItemKind.Audio,
+      ];
+
+      const counts: Record<string, number> = {};
+
+      // Get counts for each item type
+      for (const itemType of itemTypes) {
+        const response = await itemsApi.getItems({
+          userId,
+          includeItemTypes: [itemType],
+          recursive: true,
+          limit: 1, // We only need the total count
+          fields: [], // Don't need any fields, just the count
+        });
+        counts[itemType] = response.data.TotalRecordCount || 0;
+      }
+
+      return {
+        counts,
+        total: Object.values(counts).reduce((sum, count) => sum + count, 0),
       };
     }
 
