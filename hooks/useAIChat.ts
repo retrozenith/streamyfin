@@ -165,10 +165,12 @@ function buildSystemPrompt(basePrompt: string, context?: MediaContext): string {
   );
 
   contextParts.push(
-    `\nWhen referencing media items from tool results:`,
-    `- If the result includes a 'link' field (jellyfin://), use it to create clickable links: [Title](link)`,
-    `- If the result includes a 'jellyseerr_link' field, mention it as a request option: "Not in your library? [Request it](jellyseerr_link)"`,
-    `- Format examples: [The Matrix](jellyfin://item/12345) or [Request The Matrix](jellyseerr://movie/603)`,
+    `\n\nIMPORTANT - When tool results include links, you MUST format them properly:`,
+    `1. For Jellyfin items: Each result has a "link" field. Use it like this: [Movie Name](link_value)`,
+    `2. For TMDB results: Use the "jellyseerr_link" field if user wants to request content`,
+    `3. ALWAYS include the link when mentioning an item found by tools`,
+    `\nExample: If tool returns {"name": "The Matrix", "link": "jellyfin://item/abc123"}`,
+    `You should write: "I found [The Matrix](jellyfin://item/abc123) in your library."`,
   );
 
   return basePrompt + contextParts.join("\n");

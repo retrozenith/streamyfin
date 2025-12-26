@@ -151,22 +151,20 @@ export async function executeJellyfinTool(
         ],
       });
 
-      return response.data.Items?.map((item: BaseItemDto) => {
-        const result = {
-          id: item.Id,
-          name: item.Name,
-          type: item.Type,
-          year: item.ProductionYear,
-          rating: item.OfficialRating,
-          overview: item.Overview?.substring(0, 100),
-        };
+      const items =
+        response.data.Items?.filter((item) => item.Id && item.Name).map(
+          (item: BaseItemDto) => ({
+            id: item.Id,
+            name: item.Name,
+            type: item.Type,
+            year: item.ProductionYear,
+            rating: item.OfficialRating,
+            overview: item.Overview?.substring(0, 100),
+            link: `jellyfin://item/${item.Id}`,
+          }),
+        ) || [];
 
-        // Add navigation link for each item
-        return {
-          ...result,
-          link: `jellyfin://item/${item.Id}`,
-        };
-      });
+      return items;
     }
 
     case "jellyfin_recent": {
