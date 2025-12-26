@@ -139,23 +139,35 @@ export const ChatMessage: React.FC<ChatMessageProps> = React.memo(
         );
       }
 
+      // Clean up any leaked tool call JSON from the content
+      let cleanContent = message.content;
+      if (cleanContent.includes("tool_call_id")) {
+        console.warn("[ChatMessage] Cleaning leaked tool output from message");
+        cleanContent = cleanContent
+          .replace(/\{[^}]*"tool_call_id"[^}]*\}/g, "")
+          .trim();
+      }
+
       // Assistant messages: render markdown with link handler
       return (
         <Markdown
           style={markdownStyles}
           onLinkPress={(url) => {
+            console.log("[ChatMessage] Link pressed:", url);
             const {
               handleChatLink,
               isChatLink,
             } = require("@/utils/ai-tools/chatLinkHandler");
             if (isChatLink(url)) {
-              handleChatLink(url);
+              const handled = handleChatLink(url);
+              console.log("[ChatMessage] Custom link handled:", handled);
               return false; // Prevent default
             }
+            console.log("[ChatMessage] Opening external link");
             return true; // Allow default for external links
           }}
         >
-          {message.content}
+          {cleanContent}
         </Markdown>
       );
     }, [isUser, isError, message.content]);
